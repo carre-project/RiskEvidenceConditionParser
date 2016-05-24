@@ -1,7 +1,3 @@
-String.prototype.replaceAll = function(search, replacement) {
-    var target = this;
-    return target.split(search).join(replacement);
-};
 
 var RiskEvidenceConditionParser = {
 	
@@ -19,14 +15,14 @@ var RiskEvidenceConditionParser = {
 
     evaluate: function(condition, vars) {
 		for (var prop in vars ){
-			condition=condition.replaceAll(prop,vars[prop]);
+			condition=this.replaceAll(condition,prop,vars[prop]);
 		}
 		//error control
 		if(condition.indexOf("OB_")>=0) {
-			console.error("==ERROR in OB replacement==")
+			console.error("===ERROR in OB replacement===");
 			console.error("--Condition:",condition);
 			console.error("--Observable:",
-			condition.substr(condition.indexOf("OB_"),5))
+			condition.substr(condition.indexOf("OB_"),5));
 			return false;
 		}
         return this.parseAndEvaluateExpression(condition);
@@ -42,13 +38,13 @@ var RiskEvidenceConditionParser = {
 
         console.log("PARSE: Left: \"" + left + "\" Right: \"" + right + "\" Operator: \"" + oper + "\"");
 
-        if (logType == 0) // encounters OR- recurse
+        if (logType === 0) // encounters OR- recurse
             return this.parseWithStrings(left) || this.parseWithStrings(right);
-        else if (logType == 1) // encounters AND- recurse
+        else if (logType === 1) // encounters AND- recurse
             return this.parseWithStrings(left) && this.parseWithStrings(right);
         var leftSansParen = this.removeParens(left);
         var rightSansParen = this.removeParens(right);
-        if (this.isInt(leftSansParen) && this.isInt(rightSansParen))
+        if (this.isNumeric(leftSansParen) && this.isNumeric(rightSansParen))
             return this.evaluateFloat(parseFloat(leftSansParen), oper, parseFloat(rightSansParen));
         else return this.evaluateStr(leftSansParen, oper, rightSansParen); // assume they are strings
     },
@@ -61,8 +57,8 @@ var RiskEvidenceConditionParser = {
             for (var locInStr = 0; locInStr < (s.length + 1) - sampSize; locInStr++) {
                 var endIndex = locInStr + sampSize;
                 var sub;
-                if ((endIndex < s.length && s[endIndex] == '='))
-                    sub = s.substring(locInStr, ++endIndex).trim();
+                if ((endIndex < s.length && s[endIndex] === '='))
+                    sub = s.substring(locInStr, 2+endIndex).trim();
                 else
                     sub = s.substring(locInStr, endIndex).trim();
                 if (this.isOperator(sub)) {
@@ -80,10 +76,10 @@ var RiskEvidenceConditionParser = {
     },
 
     logicalOperatorType: function(op) {
-        if (op.trim()=="OR") {
+        if (op.trim()==="OR") {
             return 0;
         }
-        else if (op.trim()=="AND") {
+        else if (op.trim()==="AND") {
             return 1;
         }
         else {
@@ -94,9 +90,9 @@ var RiskEvidenceConditionParser = {
     parens: function(s, loc) {
         var parens = 0;
         for (var i = 0; i < s.length; i++) {
-            if (s[i] == '(' && i < loc)
+            if (s[i] === '(' && i < loc)
                 parens++;
-            if (s[i] == ')' && i >= loc)
+            if (s[i] === ')' && i >= loc)
                 parens++;
         }
         return parens;
@@ -106,38 +102,41 @@ var RiskEvidenceConditionParser = {
         s = s.trim();
         var keep="";
         s.split("").forEach(function(c){
-            if (!(c == '(') && !(c == ')'))
+            if (!(c === '(') && !(c === ')'))
                 keep+=c;
         });
         return keep.toString().trim();
     },
+    
+    replaceAll: function(target, search, replacement) {
+    	return target.split(search).join(replacement);
+	},
 
     isOperator: function(op) {
-        return this.operators.indexOf(op.trim())>=0
+        return this.operators.indexOf(op.trim())>=0;
     },
 
-    isInt: function(s) {
-        //is integer or not
-        return parseInt(Number(s)) == s && !isNaN(parseInt(s, 10));
+    isNumeric: function(s) {
+  		return !isNaN(parseFloat(s)) && isFinite(s);
     },
 
     evaluateFloat: function(left, op, right) {
-        if (op=="=") {
-            return left == right;
+        if (op==="=") {
+            return left === right;
         }
-        else if (op==">") {
+        else if (op===">") {
             return left > right;
         }
-        else if (op=="<") {
+        else if (op==="<") {
             return left < right;
         }
-        else if (op=="<=") {
+        else if (op==="<=") {
             return left <= right;
         }
-        else if (op==">=") {
+        else if (op===">=") {
             return left >= right;
         }
-        else if (op=="!=") {
+        else if (op==="!=") {
             return left != right;
         }
         else {
@@ -147,11 +146,11 @@ var RiskEvidenceConditionParser = {
     },
 
     evaluateStr: function(left, op, right) {
-        if (op=="=") {
-            return left.replaceAll("'", "")==right.replaceAll("'", "");
+        if (op==="=") {
+            return this.replaceAll(left,"'", "")===this.replaceAll(right,"'", "");
         }
-        else if (op=="!=") {
-            return !left.replaceAll("'", "")==right.replaceAll("'", "");
+        else if (op==="!=") {
+            return !this.replaceAll(left,"'", "")===this.replaceAll(right,"'", "");
         }
         else {
             console.error("ERROR: Operator type not recognized.");
@@ -160,13 +159,3 @@ var RiskEvidenceConditionParser = {
     }
 
 };
-
-
-
-var condition = "( OB_18 = 'stage1' OR OB_18 = 'stage2' OR OB_18 = 'stage3' OR ( OB_30 <= 90 AND OB_30 >= 30 ) ) AND OB_65 = 'yes'"
-var vals = {
-	"OB_18":"stage5",
-	"OB_30":"30.5",
-	"OB_65":"yes"
-};
-console.log(RiskEvidenceConditionParser.evaluate(condition,vals));

@@ -1,74 +1,169 @@
 /*
- *  jquery-boilerplate - v4.0.0
+ *  jquery-boilerplate - v4.1.0
  *  A jump-start for jQuery plugins development.
  *  http://jqueryboilerplate.com
  *
  *  Made by Zeno Rocha
  *  Under MIT License
  */
-// the semi-colon before function invocation is a safety net against concatenated
-// scripts and/or other plugins which may not be closed properly.
-;( function( $, window, document, undefined ) {
 
-	"use strict";
+var RiskEvidenceConditionParser = {
+	
+    operators: ["!=", "=", ">=", "<=", ">", "<", "OR", "AND"],
 
-		// undefined is used here as the undefined global variable in ECMAScript 3 is
-		// mutable (ie. it can be changed by someone else). undefined isn't really being
-		// passed in so we can ensure the value of it is truly undefined. In ES5, undefined
-		// can no longer be modified.
+    parseAndEvaluateExpression: function(ex) {
+        var arr = ex.split("");
+        for (var i = 0; i < arr.length; i++) {
 
-		// window and document are passed through as local variable rather than global
-		// as this (slightly) quickens the resolution process and can be more efficiently
-		// minified (especially when both are regularly referenced in your plugin).
+            if (arr[i] !== " ") return this.parseWithStrings(ex);
+            console.error("ERROR: Expression cannot be empty!");
+            return false;
+        }
+    },
 
-		// Create the defaults once
-		var pluginName = "defaultPluginName",
-			defaults = {
-				propertyName: "value"
-			};
-
-		// The actual plugin constructor
-		function Plugin ( element, options ) {
-			this.element = element;
-
-			// jQuery has an extend method which merges the contents of two or
-			// more objects, storing the result in the first object. The first object
-			// is generally empty as we don't want to alter the default options for
-			// future instances of the plugin
-			this.settings = $.extend( {}, defaults, options );
-			this._defaults = defaults;
-			this._name = pluginName;
-			this.init();
+    evaluate: function(condition, vars) {
+		for (var prop in vars ){
+			condition=this.replaceAll(condition,prop,vars[prop]);
 		}
+		//error control
+		if(condition.indexOf("OB_")>=0) {
+			console.error("===ERROR in OB replacement===");
+			console.error("--Condition:",condition);
+			console.error("--Observable:",
+			condition.substr(condition.indexOf("OB_"),5));
+			return false;
+		}
+        return this.parseAndEvaluateExpression(condition);
+    },
 
-		// Avoid Plugin.prototype conflicts
-		$.extend( Plugin.prototype, {
-			init: function() {
+    parseWithStrings: function(s) {
+        var op = this.determineOperatorPrecedenceAndLocation(s);
+        var start = op[0];
+        var left = s.substring(0, start).trim();
+        var right = s.substring(op[1]).trim();
+        var oper = s.substring(start, op[1]).trim();
+        var logType = this.logicalOperatorType(oper);
 
-				// Place initialization logic here
-				// You already have access to the DOM element and
-				// the options via the instance, e.g. this.element
-				// and this.settings
-				// you can add more functions like the one below and
-				// call them like the example bellow
-				this.yourOtherFunction( "jQuery Boilerplate" );
-			},
-			yourOtherFunction: function( text ) {
+        console.log("PARSE: Left: \"" + left + "\" Right: \"" + right + "\" Operator: \"" + oper + "\"");
 
-				// some logic
-				$( this.element ).text( text );
-			}
-		} );
+        if (logType === 0) // encounters OR- recurse
+            return this.parseWithStrings(left) || this.parseWithStrings(right);
+        else if (logType === 1) // encounters AND- recurse
+            return this.parseWithStrings(left) && this.parseWithStrings(right);
+        var leftSansParen = this.removeParens(left);
+        var rightSansParen = this.removeParens(right);
+        if (this.isNumeric(leftSansParen) && this.isNumeric(rightSansParen))
+            return this.evaluateFloat(parseFloat(leftSansParen), oper, parseFloat(rightSansParen));
+        else return this.evaluateStr(leftSansParen, oper, rightSansParen); // assume they are strings
+    },
 
-		// A really lightweight plugin wrapper around the constructor,
-		// preventing against multiple instantiations
-		$.fn[ pluginName ] = function( options ) {
-			return this.each( function() {
-				if ( !$.data( this, "plugin_" + pluginName ) ) {
-					$.data( this, "plugin_" +
-						pluginName, new Plugin( this, options ) );
-				}
-			} );
-		};
+    determineOperatorPrecedenceAndLocation: function(s) {
+        s = s.trim();
+        var minParens = 999999999999;
+        var currentMin = null;
+        for (var sampSize = 1; sampSize <= 3; sampSize++) {
+            for (var locInStr = 0; locInStr < (s.length + 1) - sampSize; locInStr++) {
+                var endIndex = locInStr + sampSize;
+                var sub;
+                if ((endIndex < s.length && s[endIndex] === '='))
+                    sub = s.substring(locInStr, 2+endIndex).trim();
+                else
+                    sub = s.substring(locInStr, endIndex).trim();
+                if (this.isOperator(sub)) {
+                    // Idea here is to weight logical operators so that they will still be selected over other operators
+                    // when no parens are present
+                    var parens = (this.logicalOperatorType(sub) > -1) ? this.parens(s, locInStr) - 1 : this.parens(s, locInStr);
+                    if (parens <= minParens) {
+                        minParens = parens;
+                        currentMin = [locInStr, endIndex, parens];
+                    }
+                }
+            }
+        }
+        return currentMin;
+    },
 
-} )( jQuery, window, document );
+    logicalOperatorType: function(op) {
+        if (op.trim()==="OR") {
+            return 0;
+        }
+        else if (op.trim()==="AND") {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    },
+
+    parens: function(s, loc) {
+        var parens = 0;
+        for (var i = 0; i < s.length; i++) {
+            if (s[i] === '(' && i < loc)
+                parens++;
+            if (s[i] === ')' && i >= loc)
+                parens++;
+        }
+        return parens;
+    },
+
+    removeParens: function(s) {
+        s = s.trim();
+        var keep="";
+        s.split("").forEach(function(c){
+            if (!(c === '(') && !(c === ')'))
+                keep+=c;
+        });
+        return keep.toString().trim();
+    },
+    
+    replaceAll: function(target, search, replacement) {
+    	return target.split(search).join(replacement);
+	},
+
+    isOperator: function(op) {
+        return this.operators.indexOf(op.trim())>=0;
+    },
+
+    isNumeric: function(s) {
+  		return !isNaN(parseFloat(s)) && isFinite(s);
+    },
+
+    evaluateFloat: function(left, op, right) {
+        if (op==="=") {
+            return left === right;
+        }
+        else if (op===">") {
+            return left > right;
+        }
+        else if (op==="<") {
+            return left < right;
+        }
+        else if (op==="<=") {
+            return left <= right;
+        }
+        else if (op===">=") {
+            return left >= right;
+        }
+        else if (op==="!=") {
+            return left != right;
+        }
+        else {
+            console.error("ERROR: Operator type not recognized.");
+            return false;
+        }
+    },
+
+    evaluateStr: function(left, op, right) {
+        if (op==="=") {
+            return this.replaceAll(left,"'", "")===this.replaceAll(right,"'", "");
+        }
+        else if (op==="!=") {
+            return !this.replaceAll(left,"'", "")===this.replaceAll(right,"'", "");
+        }
+        else {
+            console.error("ERROR: Operator type not recognized.");
+            return false;
+        }
+    }
+
+};
