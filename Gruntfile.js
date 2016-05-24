@@ -8,11 +8,10 @@ module.exports = function( grunt ) {
 		// Banner definitions
 		meta: {
 			banner: "/*\n" +
-				" *  <%= pkg.title || pkg.name %> - v<%= pkg.version %>\n" +
-				" *  <%= pkg.description %>\n" +
-				" *  <%= pkg.homepage %>\n" +
+				" *  CARRE Risk Evidence Condition Parser\n" +
 				" *\n" +
-				" *  Made by <%= pkg.author.name %>\n" +
+				" *  Originally made by George Drosatos in Java\n" +
+				" *  Converted into Javascript by Nick Portokallidis\n" +
 				" *  Under <%= pkg.license %> License\n" +
 				" */\n"
 		},

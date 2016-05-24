@@ -1,9 +1,8 @@
 /*
- *  jquery-boilerplate - v4.1.0
- *  A jump-start for jQuery plugins development.
- *  http://jqueryboilerplate.com
+ *  CARRE Risk Evidence Condition Parser
  *
- *  Made by Zeno Rocha
+ *  Originally made by George Drosatos in Java
+ *  Converted into Javascript by Nick Portokallidis
  *  Under MIT License
  */
 
