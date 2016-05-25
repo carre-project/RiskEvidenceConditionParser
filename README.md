@@ -1,10 +1,14 @@
 ### CARRE risk evidence condition parser
 
-Under construction...
+
+## Download
+
+Check the [dist/](https://github.com/carre-project/RiskEvidenceConditionParser/tree/master/dist) folder 
 
 ## Usage
 
 Check the [demo/](https://github.com/carre-project/RiskEvidenceConditionParser/tree/master/demo) folder 
+
 
 
 ## License
