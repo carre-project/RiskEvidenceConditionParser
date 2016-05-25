@@ -31,17 +31,17 @@
 			};
 			
 			// false values
-			values = {
-				"OB_18":"stage5",
-				"OB_30":"20.000",
-				"OB_65":"yes"
-			};
+			// values = {
+			// 	"OB_18":"stage5",
+			// 	"OB_30":"20.000",
+			// 	"OB_65":"yes"
+			// };
 			
 			// main action
-			var result = RiskEvidenceConditionParser.evaluate(condition, values)
+			var result = RiskEvidenceConditionParser.evaluate(condition, values);
 			
 			// display to console
-			console.log("RESULT:",result)
+			console.log("RESULT:",result);
 			
 			//set html elements
 			document.getElementById("condition").innerText = condition;
