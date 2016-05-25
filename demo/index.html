@@ -2,39 +2,51 @@
 <html>
 	<head>
 		<title>RiskEvidenceConditionParser</title>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script src="../src/risk_evidence_condition_parser.js"></script>
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	</head>
 	<body class="col-xs-12">
 		
 	<div class="row">
 		<div class="col-xs-3">
+			<h3>Condition</h3>
+			<p id="condition"></p>			
+			
+			<h3>Test values</h3>
+			<p id="values"></p>
+			
 			<h3>Result</h3>
-			<div id="result" class="alert alert-warning"></div>
+			<h4 id="result"></h4>
 		</div>
 	</div>
 		
 		<script>
 
 			var condition = "( OB_18 = 'stage1' OR OB_18 = 'stage2' OR OB_18 = 'stage3' OR ( OB_30 <= 90 AND OB_30 >= 30 ) ) AND OB_65 = 'yes'";
+			var values;
 			//true values
-			var values = {
+			values = {
 				"OB_18":"stage5",
 				"OB_30":"30.000",
 				"OB_65":"yes"
 			};
 			
-			//false values
-			// var values = {
-			// 	"OB_18":"stage5",
-			// 	"OB_30":"20.000",
-			// 	"OB_65":"yes"
-			// };
+			// false values
+			values = {
+				"OB_18":"stage5",
+				"OB_30":"20.000",
+				"OB_65":"yes"
+			};
 			
+			// main action
 			var result = RiskEvidenceConditionParser.evaluate(condition, values)
+			
+			// display to console
 			console.log("RESULT:",result)
-			$("#result").text(result);
+			
+			//set html elements
+			document.getElementById("condition").innerText = condition;
+			document.getElementById("values").innerText = JSON.stringify(values, null, '\t');
+			document.getElementById("result").innerText = result;
 			
 		</script>
 	</body>
