@@ -9,4 +9,4 @@ Check the demo folder :[demo/](https://github.com/carre-project/RiskEvidenceCond
 
 ## License
 
-[MIT License](http://zenorocha.mit-license.org/) © Zeno Rocha
+[MIT License](http://zenorocha.mit-license.org/) © [www.carre-project.eu](http://www.carre-project.eu)
