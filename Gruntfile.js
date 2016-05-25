@@ -22,14 +22,14 @@ module.exports = function( grunt ) {
 				banner: "<%= meta.banner %>"
 			},
 			dist: {
-				src: [ "src/jquery.boilerplate.js" ],
-				dest: "dist/jquery.boilerplate.js"
+				src: [ "src/risk_evidence_condition_parser.js" ],
+				dest: "dist/risk_evidence_condition_parser.js"
 			}
 		},
 
 		// Lint definitions
 		jshint: {
-			files: [ "src/jquery.boilerplate.js", "test/**/*" ],
+			files: [ "src/risk_evidence_condition_parser.js"],
 			options: {
 				jshintrc: ".jshintrc"
 			}
@@ -45,8 +45,8 @@ module.exports = function( grunt ) {
 		// Minify definitions
 		uglify: {
 			dist: {
-				src: [ "dist/jquery.boilerplate.js" ],
-				dest: "dist/jquery.boilerplate.min.js"
+				src: [ "dist/risk_evidence_condition_parser.js" ],
+				dest: "dist/risk_evidence_condition_parser.min.js"
 			},
 			options: {
 				banner: "<%= meta.banner %>"
@@ -57,25 +57,8 @@ module.exports = function( grunt ) {
 		coffee: {
 			compile: {
 				files: {
-					"dist/jquery.boilerplate.js": "src/jquery.boilerplate.coffee"
+					"dist/risk_evidence_condition_parser.js": "src/risk_evidence_condition_parser.coffee"
 				}
-			}
-		},
-
-		// karma test runner
-		karma: {
-			unit: {
-				configFile: "karma.conf.js",
-				background: true,
-				singleRun: false,
-				browsers: [ "PhantomJS", "Firefox" ]
-			},
-
-			//continuous integration mode: run tests once in PhantomJS browser.
-			travis: {
-				configFile: "karma.conf.js",
-				singleRun: true,
-				browsers: [ "PhantomJS" ]
 			}
 		},
 
@@ -95,10 +78,9 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( "grunt-contrib-uglify" );
 	grunt.loadNpmTasks( "grunt-contrib-coffee" );
 	grunt.loadNpmTasks( "grunt-contrib-watch" );
-	grunt.loadNpmTasks( "grunt-karma" );
 
-	grunt.registerTask( "travis", [ "jshint", "karma:travis" ] );
+	grunt.registerTask( "travis", [ "jshint" ] );
 	grunt.registerTask( "lint", [ "jshint", "jscs" ] );
 	grunt.registerTask( "build", [ "concat", "uglify" ] );
-	grunt.registerTask( "default", [ "jshint", "build", "karma:unit:run" ] );
+	grunt.registerTask( "default", [ "jshint", "build"] );
 };

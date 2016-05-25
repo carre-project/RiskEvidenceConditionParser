@@ -1,22 +1,17 @@
 {
-  "name": "jquery-boilerplate",
+  "name": "carre-recp",
   "license": "MIT",
   "authors": [
-    "Zeno Rocha <hi@zenorocha.com>"
   ],
-  "description": "A jump-start for jQuery plugins development.",
-  "homepage": "http://jqueryboilerplate.com",
+  "description": "CARRE risk evidence condition parser",
   "keywords": [
-    "jquery",
-    "plugin",
-    "boilerplate",
-    "jquery-plugin",
-    "jquery-boilerplate"
+    "CARRE",
+    "risk evidence",
+    "parser",
+    "condition"
   ],
-  "main": "src/jquery.boilerplate.js",
-  "dependencies": {
-    "jquery": "1"
-  },
+  "main": "src/risk_evidence_condition_parser.js",
+  "dependencies": {},
   "ignore": [
     "npm-debug.log",
     "bower_components",
