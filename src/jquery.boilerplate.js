@@ -36,7 +36,7 @@ var RiskEvidenceConditionParser = {
         var oper = s.substring(start, op[1]).trim();
         var logType = this.logicalOperatorType(oper);
 
-        console.log("PARSE: Left: \"" + left + "\" Right: \"" + right + "\" Operator: \"" + oper + "\"");
+        // console.log("PARSE: Left: \"" + left + "\" Right: \"" + right + "\" Operator: \"" + oper + "\"");
 
         if (logType === 0) // encounters OR- recurse
             return this.parseWithStrings(left) || this.parseWithStrings(right);
