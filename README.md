@@ -4,7 +4,7 @@ Under construction...
 
 ## Usage
 
-Check the demo folder :[demo/](https://github.com/carre-project/RiskEvidenceConditionParser/tree/master/demo)
+Check the [demo/](https://github.com/carre-project/RiskEvidenceConditionParser/tree/master/demo) folder 
 
 
 ## License
