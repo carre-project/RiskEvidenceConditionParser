@@ -23,7 +23,7 @@ var RiskEvidenceConditionParser = {
         
 		//error control
 		if(condition.indexOf("OB_")>=0) {
-			console.error("===ERROR in OB replacement===");
+// 			console.error("===ERROR in OB replacement===");
 // 			console.error("--Condition:",condition);
 // 			console.error("--Observable:",
 // 			condition.substr(condition.indexOf("OB_"),5));
