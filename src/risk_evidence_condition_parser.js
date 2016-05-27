@@ -14,15 +14,19 @@ var RiskEvidenceConditionParser = {
     },
 
     evaluate: function(condition, vars) {
-		for (var prop in vars ){
-			condition=this.replaceAll(condition,prop,vars[prop]);
-		}
+        // sort by key length
+        var sortedVals = Object.keys(vars).sort(function(a,b){return b.length>a.length;});
+        
+        sortedVals.forEach(function(val){
+            condition=RiskEvidenceConditionParser.replaceAll(condition,val,vars[val]);
+        });
+        
 		//error control
 		if(condition.indexOf("OB_")>=0) {
 			console.error("===ERROR in OB replacement===");
-			console.error("--Condition:",condition);
-			console.error("--Observable:",
-			condition.substr(condition.indexOf("OB_"),5));
+// 			console.error("--Condition:",condition);
+// 			console.error("--Observable:",
+// 			condition.substr(condition.indexOf("OB_"),5));
 			return false;
 		}
         return this.parseAndEvaluateExpression(condition);
@@ -144,15 +148,16 @@ var RiskEvidenceConditionParser = {
             return false;
         }
     },
+    
+    fixQuotes: function(str){
+      return str.replace(/['"]+/g, '');
+        
+    },
 
     evaluateStr: function(left, op, right) {
-        if (op==="=") {
-            return this.replaceAll(left,"'", "")===this.replaceAll(right,"'", "");
-        }
-        else if (op==="!=") {
-            return !this.replaceAll(left,"'", "")===this.replaceAll(right,"'", "");
-        }
-        else {
+        if (op==="=" || op==="!=" ) {
+            return this.fixQuotes(left)===this.fixQuotes(right);
+        } else {
             console.error("ERROR: Operator type not recognized.");
             return false;
         }

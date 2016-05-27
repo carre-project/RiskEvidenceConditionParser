@@ -21,13 +21,17 @@
 		
 		<script>
 
-			var condition = "( OB_18 = 'stage1' OR OB_18 = 'stage2' OR OB_18 = 'stage3' OR ( OB_30 <= 90 AND OB_30 >= 30 ) ) AND OB_65 = 'yes'";
+			// var condition = "( OB_18 = 'stage1' OR OB_18 = 'stage2' OR OB_18 = 'stage3' OR ( OB_30 <= 90 AND OB_30 >= 30 ) ) AND OB_7='male' AND OB_65 = 'yes'";
+			var condition ="OB_7 <= 59 AND OB_7 >= 50 AND OB_64 = 'male'"; // "OB_58 = 'moderate' AND OB_64 = 'male'";// 
 			var values;
 			//true values
 			values = {
-				"OB_18":"stage5",
-				"OB_30":"30.000",
-				"OB_65":"yes"
+			  OB_16: "28.0",
+			  OB_5: "52",
+			  OB_58: "moderate",
+			  OB_6: "52",
+			  OB_64: "male",
+			  OB_7: "52"
 			};
 			
 			// false values
