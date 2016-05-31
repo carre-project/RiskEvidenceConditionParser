@@ -22,10 +22,11 @@ var RiskEvidenceConditionParser = {
 
     evaluate: function(condition, vars) {
         // sort by key length
+        console.log(Object.keys(vars));
         var sortedVals = Object.keys(vars).sort(function(a,b){return b.length>a.length;});
-        
+        console.log(sortedVals);
         sortedVals.forEach(function(val){
-            condition=RiskEvidenceConditionParser.replaceAll(condition,val,vars[val]);
+            condition=RiskEvidenceConditionParser.replaceAll(condition,val+" ",vars[val]);
         });
         
 		//error control
