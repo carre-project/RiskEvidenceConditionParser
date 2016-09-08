@@ -1,7 +1,7 @@
 {
   "name": "carre-recp",
-  "version": "0.1.0",
-  "description": "Angular Directive for displaying github contributions without any dependency",
+  "version": "0.1.1",
+  "description": "CARRE Risk evidence condition parser, see /demo for usage instructions",
   "main": "dist/risk_evidence_condition_parser.js",
   "scripts": {
     "test": ""
