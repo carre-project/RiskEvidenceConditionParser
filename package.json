@@ -1,7 +1,16 @@
 {
   "name": "carre-recp",
   "version": "0.1.0",
-  "description": "CARRE risk evidence condition parser",
+  "description": "Angular Directive for displaying github contributions without any dependency",
+  "main": "dist/risk_evidence_condition_parser.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": {
+    "name": "Nick Portokallidis",
+    "url": "www.nporto.com",
+    "email": "portokallidis@gmail.com"
+  },
   "keywords": [
     "CARRE",
     "risk evidence",
